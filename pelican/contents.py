@@ -12,7 +12,8 @@ from pelican.plugins import signals
 from pelican.settings import DEFAULT_CONFIG
 from pelican.utils import (deprecated_attribute, memoized, path_to_url,
                            posixize_path, sanitised_join, set_date_tzinfo,
-                           slugify, truncate_html_words)
+                           slugify, truncate_html_paragraphs,
+                           truncate_html_words)
 
 # Import these so that they're avalaible when you import from pelican.contents.
 from pelican.urlwrappers import (Author, Category, Tag, URLWrapper)  # NOQA
@@ -387,8 +388,12 @@ class Content:
         if 'summary' in self.metadata:
             return self.metadata['summary']
 
-        if self.settings['SUMMARY_MAX_LENGTH'] is None:
+        max_length = self.settings['SUMMARY_MAX_LENGTH']
+        if max_length is None:
             return self.content
+
+        if max_length < 0:
+            return truncate_html_paragraphs(self.content, -max_length)
 
         return truncate_html_words(self.content,
                                    self.settings['SUMMARY_MAX_LENGTH'],

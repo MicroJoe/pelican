@@ -110,6 +110,18 @@ class TestPage(TestBase):
         page = Page(**page_kwargs)
         self.assertEqual(page.summary, '')
 
+    def test_summary_paragraph(self):
+        # If a :SUMMARY_MAX_LENGTH: is set, there is no other summary and the
+        # value is negative, generated summary should not exeed the given
+        # paragraph count.
+        page_kwargs = self._copy_page_kwargs()
+        settings = get_settings()
+        page_kwargs['settings'] = settings
+        del page_kwargs['metadata']['summary']
+        settings['SUMMARY_MAX_LENGTH'] = -1
+        page = Page(**page_kwargs)
+        self.assertEqual(page.summary, TEST_CONTENT)
+
     def test_summary_end_marker(self):
         # If a :SUMMARY_END_MARKER: is set, and there is no other summary,
         # generated summary should contain the specified marker at the end.
