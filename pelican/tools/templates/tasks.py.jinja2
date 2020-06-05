@@ -112,6 +112,9 @@ def livereload(c):
     for extension in static_file_extensions:
         static_file = '{0}/static/**/*{1}'.format(theme_path, extension)
         server.watch(static_file, lambda: build(c))
+    # Open site in new web browser tab/window
+    import webbrowser
+    webbrowser.open("{host}:{port}".format(**CONFIG))
     # Serve output path on configured host and port
     server.serve(host=CONFIG['host'], port=CONFIG['port'], root=CONFIG['deploy_path'])
 
